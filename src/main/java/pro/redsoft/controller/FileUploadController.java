@@ -1,5 +1,6 @@
 package pro.redsoft.controller;
 
+import com.mongodb.gridfs.GridFSDBFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,13 +40,13 @@ public class FileUploadController {
     @RequestMapping(value = "/{fileId}")
     public @ResponseBody ResponseEntity serveFile(@PathVariable String fileId) {
 
-        Optional<InputStream> file = fileStorage.read(fileId);
+        Optional<GridFSDBFile> file = fileStorage.read(fileId);
 
         if(file.isPresent()){
              return ResponseEntity
                     .ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filId=\""+fileId+"\"")
-                    .body(file);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\""+file.get().getFilename()+"\"")
+                    .body(Optional.of(file.get().getInputStream()));
         }
         else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");

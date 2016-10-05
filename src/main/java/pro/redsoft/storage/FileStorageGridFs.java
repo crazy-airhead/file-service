@@ -29,7 +29,7 @@ public class FileStorageGridFs implements FileStorage {
 
 
     @Override
-    public Optional<InputStream> read(String fileId) {
+    public Optional<GridFSDBFile> read(String fileId) {
         GridFSDBFile file;
 
         try {
@@ -40,7 +40,7 @@ public class FileStorageGridFs implements FileStorage {
             return Optional.empty();
         }
 
-        return file ==null? Optional.empty():Optional.of(file.getInputStream());
+        return file ==null? Optional.empty():Optional.of(file);
     }
 
 

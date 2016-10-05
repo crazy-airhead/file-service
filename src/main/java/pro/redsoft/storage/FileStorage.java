@@ -12,7 +12,7 @@ public interface FileStorage {
     FileInfo save(InputStream content, String fileName);
 
 
-    Optional<InputStream> read(String fileId);
+    Optional<GridFSDBFile> read(String fileId);
 
 
     Stream<GridFSDBFile> getAll();
