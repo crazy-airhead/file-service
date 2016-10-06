@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
-import pro.redsoft.controller.FileUploadController;
 import pro.redsoft.storage.FileStorage;
 import pro.redsoft.storage.FileStorageGridFs;
 

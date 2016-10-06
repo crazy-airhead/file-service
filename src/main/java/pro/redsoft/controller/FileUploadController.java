@@ -10,10 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pro.redsoft.domain.FileInfo;
 import pro.redsoft.storage.FileStorage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -24,6 +22,9 @@ public class FileUploadController {
     @Autowired
     private FileStorage fileStorage;
 
+    public FileUploadController(FileStorage fileStorage){
+        this.fileStorage = fileStorage;
+    }
 
     @RequestMapping(value = "/")
     public String index(Model model) {
@@ -59,10 +60,8 @@ public class FileUploadController {
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 
-
-        FileInfo fileInfo= null;
         try {
-            fileInfo = fileStorage.save(file.getInputStream(),file.getOriginalFilename());
+             fileStorage.save(file.getInputStream(),file.getOriginalFilename());
         }
         catch (IOException ex){
             ex.printStackTrace();
@@ -74,4 +73,16 @@ public class FileUploadController {
         return "redirect:/";
     }
 
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
+
+        try {
+             fileStorage.save(file.getInputStream(),file.getOriginalFilename());
+        }
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("File was upload");
+    }
 }

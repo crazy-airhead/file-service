@@ -53,6 +53,11 @@ public class FileStorageGridFs implements FileStorage {
     }
 
 
+    @Override
+    public void deleteTestFiles(String testFileName){
+        Query query = new Query(Criteria.where("filename").is(testFileName));
+        gridOperations.delete(query);
+    }
 
     private static FileInfo toFileInfo(GridFSFile gridFile) {
         FileInfo fileInfo = new FileInfo();

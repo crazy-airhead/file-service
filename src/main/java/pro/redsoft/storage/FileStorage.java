@@ -17,4 +17,5 @@ public interface FileStorage {
 
     Stream<GridFSDBFile> getAll();
 
+    void deleteTestFiles(String fileName);
 }
