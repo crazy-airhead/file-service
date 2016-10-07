@@ -2,6 +2,8 @@ package pro.redsoft.config;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +24,13 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
     @Override
     public Mongo mongo() throws Exception {
-        return new MongoClient(environment.getProperty("mongo.db.url"));
+
+        MongoClientOptions.Builder builder = MongoClientOptions.builder();
+        builder
+                .connectionsPerHost(8)
+                .threadsAllowedToBlockForConnectionMultiplier(32);
+
+        return new MongoClient(environment.getProperty("mongo.db.url"), builder.build());
     }
 
     @Bean
