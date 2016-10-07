@@ -1,0 +1,3 @@
+JVM -XmX  |   upload.count() -> (size = 200 Kb)
+   1Gb    |     ~3100
+   2Gb    |     ~
