@@ -1,54 +1,44 @@
 package pro.redsoft;
 
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import pro.redsoft.controller.FileUploadController;
-import pro.redsoft.storage.FileStorage;
-
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
+import pro.redsoft.storage.FileStorage;
+
+import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
-public class FileUploadControllerTest {
+@WebAppConfiguration
+public class FileUploadControllerTest extends BackendBaseTest {
 
-    @Autowired
-    FileUploadController fileUploadController;
-
-    @Autowired
+    @Inject
     FileStorage fileStorage;
 
     File testFile;
 
-    @Before
-    public void setUp(){
-        testFile = new File(FileUploadControllerTest.class.getResource("/file-to-test-uploading").getFile());
-        RestAssuredMockMvc.standaloneSetup(fileUploadController);
-    }
-
-
     @Test
     public void testController() {
+
+        testFile = new File(FileUploadControllerTest.class.getResource("/file-to-test-uploading").getFile());
+
         given()
                 .multiPart(testFile)
                 .post("/upload").then()
                 .assertThat()
                 .statusCode(200);
-
     }
 
     @Test
-    public void testMaxCountUploads(){
-        for (int i = 0; i<1000; i++){
+    public void testMaxCountUploads() {
+        for (int i = 0; i < 1000; i++) {
             Thread thread = new Thread(() -> given()
                     .multiPart(testFile)
                     .post("/upload"));
@@ -57,10 +47,9 @@ public class FileUploadControllerTest {
         }
     }
 
-    @After
-    public void tearDown(){
-        fileStorage.deleteTestFiles(testFile.getName());
+    @Override
+    public void shutdown() {
+        // fileStorage.deleteTestFiles(testFile.getName());
+        super.shutdown();
     }
-
-
 }
