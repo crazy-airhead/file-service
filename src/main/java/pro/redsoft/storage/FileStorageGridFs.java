@@ -6,13 +6,15 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
+import org.springframework.stereotype.Component;
+
 import pro.redsoft.domain.FileInfo;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-
+@Component
 public class FileStorageGridFs implements FileStorage {
 
     private final GridFsOperations gridOperations;

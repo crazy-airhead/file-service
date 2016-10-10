@@ -22,16 +22,25 @@ public class FileUploadController {
     @Autowired
     private FileStorage fileStorage;
 
-    public FileUploadController(FileStorage fileStorage){
+    public FileUploadController(FileStorage fileStorage) {
+        this.fileStorage = fileStorage;
+    }
+
+
+    public FileStorage getFileStorage() {
+        return fileStorage;
+    }
+
+    public void setFileStorage(FileStorage fileStorage) {
         this.fileStorage = fileStorage;
     }
 
     @RequestMapping(value = "/")
     public String index(Model model) {
 
-        HashMap<String,String> allFiles = new HashMap<>();
+        HashMap<String, String> allFiles = new HashMap<>();
 
-        fileStorage.getAll().forEach(file -> allFiles.put(file.getId().toString(),file.getFilename()));
+        fileStorage.getAll().forEach(file -> allFiles.put(file.getId().toString(), file.getFilename()));
 
         model.addAttribute("files", allFiles);
         return "uploadForm";
@@ -39,17 +48,17 @@ public class FileUploadController {
 
 
     @RequestMapping(value = "/{fileId}")
-    public @ResponseBody ResponseEntity serveFile(@PathVariable String fileId) {
+    @ResponseBody
+    public ResponseEntity serveFile(@PathVariable String fileId) {
 
         Optional<GridFSDBFile> file = fileStorage.read(fileId);
 
-        if(file.isPresent()){
-             return ResponseEntity
+        if (file.isPresent()) {
+            return ResponseEntity
                     .ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\""+file.get().getFilename()+"\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\"" + file.get().getFilename() + "\"")
                     .body(Optional.of(file.get().getInputStream()));
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
         }
 
@@ -61,9 +70,8 @@ public class FileUploadController {
                                    RedirectAttributes redirectAttributes) {
 
         try {
-             fileStorage.save(file.getInputStream(),file.getOriginalFilename());
-        }
-        catch (IOException ex){
+            fileStorage.save(file.getInputStream(), file.getOriginalFilename());
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
@@ -74,12 +82,12 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
+    @ResponseBody
+    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
 
         try {
-             fileStorage.save(file.getInputStream(),file.getOriginalFilename());
-        }
-        catch (IOException ex){
+            fileStorage.save(file.getInputStream(), file.getOriginalFilename());
+        } catch (IOException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
